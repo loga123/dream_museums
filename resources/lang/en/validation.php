@@ -22,6 +22,7 @@ return [
         'marker_store_error'=>'Marker ":marker" not entered!',
         'marker_update'=>'Marker ":marker" has been successfully updated!',
         'marker_update_error' => 'Marker ":marker" not deleted!',
+        'marker_destroy'=>'Marker ":marker" has been successfully deleted!',
 
         //markers and grups
         'merge_marker_store'=>'Successfully linked markers to group',

@@ -21,6 +21,7 @@ return [
         'marker_store_error'=>'Marker ":marker" nije unesen!',
         'marker_update'=>'Marker ":marker" je uspješno ažuriran!',
         'marker_update_error' => 'Marker ":marker" nije obrisan!',
+        'marker_destroy'=>'Marker ":marker" je uspješno obrisan!',
 
         'marker_group_delete'=>'Uspješno obrisan marker iz grupe',
         'marker_group_delete_error'=>'Marker nije obrisan iz grupe',

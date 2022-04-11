@@ -118,14 +118,48 @@ class MarkerController extends BaseController
     public function checkName(Request $request){
 
         $current_name = $request['name'];
-        $counter = 1;
         Log::info($current_name);
-        while(Marker::where('name',$current_name)->count()>0){
-            $current_name .=' '. $counter;
-            $counter++;
+
+        $count = 1;
+
+        $number = preg_replace('/[^0-9]/', '', $current_name);
+
+
+        if ($number != substr($number, 0,-1) ){
+
+            $current_only_name = $current_name.' '.($count);
+
+        }else{
+
+            if(strlen($number)>1){
+                $number= substr($number, 0,-1);
+            }
+            $number = (int) $number;
+
+            $pos = strpos($current_name, (string)$number,strlen((string)$number));
+
         }
 
-        return $current_name;
+
+        if(empty($pos)){
+            $current_only_name = $current_name.' '.($count);
+            $only_name = $current_name;
+        }else{
+            $only_name = substr($current_name, 0,$pos );
+            $current_only_name = $only_name.' '.($number+$count);
+        }
+
+        Log::info($current_only_name);
+        /*$current_name .=''.($number+1);*/
+Log::info(Marker::where('name',$current_only_name)->count());
+        while(Marker::where('name',$current_only_name)->count()>0){
+            $count++;
+            $current_only_name = $only_name.' '.($count);
+            Log::info($current_only_name);
+        }
+
+
+        return $current_only_name;
     }
 
     /**
@@ -445,7 +479,7 @@ class MarkerController extends BaseController
                     $file = $request->file('video');
                     $ext = $file->extension();
 
-                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
                         $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         if ($i->status == 'error'){
@@ -461,12 +495,12 @@ class MarkerController extends BaseController
 
 
 
-                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.'.$ext)){
+                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
 
                             $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
                             $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext;
+                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -553,7 +587,7 @@ class MarkerController extends BaseController
 
                     $ext = $file->extension();
 
-                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
 
                         $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
@@ -610,7 +644,7 @@ class MarkerController extends BaseController
 
                     $ext = $file->extension();
 
-                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb'), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
 
                     $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
@@ -625,11 +659,11 @@ class MarkerController extends BaseController
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
-                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.glb')){
+                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.glb')){
 
                             $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
                             $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.''.$ext;
+                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -744,10 +778,10 @@ class MarkerController extends BaseController
         if ($marker->delete()) {
             Log::info('Uspješno obrisan marker "' . $marker['name']. '". Korisnik: ' .$this->name .' '.$this->last_name .' - ' .$this->email.'');
 
-            return $this->sendResponse('USPJEŠNO BRISANJE', 'Marker uspjesno obrisan');
+            return $this->sendResponse(trans('validation.custom.success'),  trans('validation.custom.marker_destroy',['marker'=> $marker['name']]));
         }
         Log::error('Nauspjeh - Marker "' . $marker['name']. '" nije obrisan.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
-        return $this->sendResponseError('ERROR', 'Marker nije obrisan');
+        return $this->sendResponseError(trans('validation.custom.error'),  trans('validation.custom.marker_update_error',['marker'=> $marker['name']]));
 
     }
 
@@ -836,30 +870,33 @@ class MarkerController extends BaseController
                     Log::error('Nauspjeh - Marker nije dodan u grupu: "' . $group['name']. '".  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
                 }
 
-                if( Storage::disk('public')->put('markers/'.$this->id.'/'.$marker->id.'.png',base64_decode(\Milon\Barcode\Facades\DNS2DFacade::getBarcodePNGCustom(''.$marker->id.'', 'QRCODE',50,50,array(255, 255, 255),array(0,0,0))))){
+                if($request->hasFile('video')){
+
+                    $file = $request->file('video');
+                    $ext = $file->extension();
+
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
+
+                        $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        if ($i->status == 'error'){
+                            Log::error($i->msg);
+                            /*die($i->msg);*/
+                        }
+
+                        $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
-                    $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    if ($i->status == 'error'){
-                        Log::error($i->msg);
-                        /*die($i->msg);*/
-                    }
 
-                    $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                    if($request->hasFile('video')){
+                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
-                        $file = $request->file('video');
-
-                        $ext = $file->extension();
-                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.'.$ext)){
 
                             $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
                             $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext;
+                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -903,7 +940,7 @@ class MarkerController extends BaseController
 
                 //$create_marker =  \Milon\Barcode\Facades\DNS2DFacade::getBarcodeSVG('70', 'DATAMATRIX',50,50);
 
-                if( Storage::disk('public')->put('markers/'.$this->id.'/'.$marker->id.'.png',base64_decode(\Milon\Barcode\Facades\DNS2DFacade::getBarcodePNGCustom(''.$marker->id.'', 'QRCODE',50,50,array(255, 255, 255),array(0,0,0))))){
+                if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'.pdf'), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
 
                     $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
@@ -911,16 +948,21 @@ class MarkerController extends BaseController
                         Log::error($i->msg);
                         /*die($i->msg);*/
                     }
+                    $download = $marker->toArray();
+                    Log::info($download);
+                    $data = compact('download');
+
+                    PDF::loadView('export/exportTextMarkerCreate',$data)->save(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.pdf'));
 
                     $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
                     $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
                     $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                    $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.pdf';
                     $marker->update();
 
                 }
-
 
                 Log::info('Uspješno unesen marker "' . $request['name']. '". Korisnik: ' .$this->name .' '.$this->last_name .' - ' .$this->email.'');
                 return $this->sendResponse(trans('validation.custom.success'), trans('validation.custom.marker_store',['marker'=> $request['name']]));
@@ -948,25 +990,27 @@ class MarkerController extends BaseController
                     Log::error('Nauspjeh - Marker nije dodan u grupu: "' . $group['name']. '".  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
                 }
 
-                if( Storage::disk('public')->put('markers/'.$this->id.'/'.$marker->id.'.png',base64_decode(\Milon\Barcode\Facades\DNS2DFacade::getBarcodePNGCustom(''.$marker->id.'', 'QRCODE',50,50,array(255, 255, 255),array(0,0,0))))){
+                if($request->hasFile('picture')){
+
+                    $file = $request->file('picture');
+
+                    $ext = $file->extension();
+
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
 
-                    $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    if ($i->status === 'error'){
-                        Log::error($i->msg);
-                        /*die($i->msg);*/
-                    }
+                        $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        if ($i->status === 'error'){
+                            Log::error($i->msg);
+                            /*die($i->msg);*/
+                        }
 
-                    //$i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
+                        //$i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                    if($request->hasFile('picture')){
 
-                        $file = $request->file('picture');
-
-                        $ext = $file->extension();
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
                             $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
@@ -1011,30 +1055,32 @@ class MarkerController extends BaseController
                     Log::error('Nauspjeh - Marker nije dodan u grupu: "' . $group['name']. '".  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
                 }
 
-                if( Storage::disk('public')->put('markers/'.$this->id.'/'.$marker->id.'.png',base64_decode(\Milon\Barcode\Facades\DNS2DFacade::getBarcodePNGCustom(''.$marker->id.'', 'QRCODE',50,50,array(255, 255, 255),array(0,0,0))))){
+                if($request->hasFile('models')){
+
+                    $file = $request->file('models');
+
+                    $ext = $file->extension();
+
+                    if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb'), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
 
-                    $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    if ($i->status === 'error'){
-                        Log::error($i->msg);
-                        /*die($i->msg);*/
-                    }
+                        $i = new MarkerPATT(public_path('/storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        if ($i->status === 'error'){
+                            Log::error($i->msg);
+                            /*die($i->msg);*/
+                        }
 
-                    $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
-                    $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
+                        $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
+                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
+                        $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                    if($request->hasFile('models')){
 
-                        $file = $request->file('models');
-
-                        $ext = $file->extension();
-                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.glb')){
+                        if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.glb')){
 
                             $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
                             $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.glb';
+                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
