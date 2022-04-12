@@ -175,7 +175,13 @@
 
               <div class="modal-body">
 
-                <div class="form-group">
+                <div class="form-group" v-if="form.clone">
+                  <label for="name">{{$t('name')}}</label>
+                  <input v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                  <has-error :form="form" field="name"></has-error>
+                </div>
+
+                <div class="form-group" v-else>
                   <label for="name">{{$t('name')}}</label>
                   <input v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
                   <has-error :form="form" field="name"></has-error>
@@ -500,6 +506,7 @@
           url_video:'',
           selected: [],
           selectAll: false,
+          clone:false,
         })
       }
     },
@@ -519,6 +526,7 @@
         this.form.fill(marker);
         this.form.name=this.new_name_marker;
         this.form.type=null;
+        this.form.clone=true;
         this.form.selected=[];
         this.form.selectAll=false;
 
