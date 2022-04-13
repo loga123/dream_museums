@@ -471,15 +471,28 @@ class MarkerController extends BaseController
 
         }
 
+        if (!is_dir('storage/markers/' . $this->id . '/' . $marker->id)) {
+            // dir doesn't exist, make it
+            mkdir('storage/markers/' . $this->id . '/' . $marker->id);
+        }
+
+
+        /*if (!mkdir($concurrentDirectory = 'storage/markers/' . $this->id . '/' . $marker->id) && !is_dir($concurrentDirectory)) {
+            Log::error(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            //throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }*/
+
         if ($request['type']==='video'){
 
             if ($marker->save()) {
                 $message .= 'Uspješno unesen marker "' . $request['name']. '"<br>';
 
+
                 if($request->hasFile('video')){
 
                     $file = $request->file('video');
                     $ext = $file->extension();
+
 
                     if(\QrCode::size(500)->format('png')->generate(URL::to('storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext), public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png')) == null){
 
@@ -866,6 +879,22 @@ class MarkerController extends BaseController
             }
 
         }
+
+        if (!is_dir('storage/markers/' . $this->id . '/' . $marker->id)) {
+            // dir doesn't exist, make it
+            mkdir('storage/markers/' . $this->id . '/' . $marker->id);
+        }
+
+
+        /*if(!is_dir('storage/markers/' . $this->id . '/' . $marker->id)){
+            if(!mkdir($concurrentDirectory = 'storage/markers/' . $this->id . '/' . $marker->id) ){
+                Log::error('Directory  was not created');
+            }
+        }
+        if (!mkdir($concurrentDirectory = 'storage/markers/' . $this->id . '/' . $marker->id) && !is_dir($concurrentDirectory)) {
+            Log::error(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            //throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }*/
 
 
         if ($request['type']==='video'){
