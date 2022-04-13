@@ -21,7 +21,8 @@ class Marker extends Model
         'text',
         'file_marker',
         'image_marker',
-        'user_id'
+        'user_id',
+        'clone'
     ];
 
     public function groups()

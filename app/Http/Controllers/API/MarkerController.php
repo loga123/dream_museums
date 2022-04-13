@@ -116,15 +116,17 @@ class MarkerController extends BaseController
     }
 
     public function checkName(Request $request){
+        global $only_name;
+        global $current_only_name;
+        global $pos;
 
         $current_name = $request['name'];
-        Log::info($current_name);
-
         $count = 1;
 
+        //izvuci broj iz stringa
         $number = preg_replace('/[^0-9]/', '', $current_name);
 
-
+        //ako je broj razlicit od zadnje znamanke
         if ($number != substr($number, 0,-1) ){
 
             $current_only_name = $current_name.' '.($count);
@@ -135,11 +137,8 @@ class MarkerController extends BaseController
                 $number= substr($number, 0,-1);
             }
             $number = (int) $number;
-
             $pos = strpos($current_name, (string)$number,strlen((string)$number));
-
         }
-
 
         if(empty($pos)){
             $current_only_name = $current_name.' '.($count);
@@ -149,15 +148,11 @@ class MarkerController extends BaseController
             $current_only_name = $only_name.' '.($number+$count);
         }
 
-        Log::info($current_only_name);
-        /*$current_name .=''.($number+1);*/
-Log::info(Marker::where('name',$current_only_name)->count());
+
         while(Marker::where('name',$current_only_name)->count()>0){
             $count++;
             $current_only_name = $only_name.' '.($count);
-            Log::info($current_only_name);
         }
-
 
         return $current_only_name;
     }
@@ -431,7 +426,7 @@ Log::info(Marker::where('name',$current_only_name)->count());
 
 
     public function store2(Request $request){
-    //dd($request->all());
+        //dd($request->all());
         global $message;
         $current_path=getcwd();
 
@@ -467,7 +462,14 @@ Log::info(Marker::where('name',$current_only_name)->count());
 
         $marker = new Marker($request->all());
         $marker->setAttribute('user_id',$this->user->id);
+        if(!empty($request['clone'])){
+            $clone = $request['clone'] === "true" ? 1 : 0;
+            $marker->clone = $clone;
+            if($request['other_name'] !== "undefined"){
+                $marker->name = $request['name'].' '.$request['other_name'];
+            }
 
+        }
 
         if ($request['type']==='video'){
 
@@ -855,6 +857,15 @@ Log::info(Marker::where('name',$current_only_name)->count());
 
         $marker = new Marker($request->all());
         $marker->setAttribute('user_id',$this->user->id);
+
+        if(!empty($request['clone'])){
+            $clone = $request['clone'] === "true" ? 1 : 0;
+            $marker->clone = $clone;
+            if($request['other_name'] !== "undefined"){
+                $marker->name = $request['name'].' '.$request['other_name'];
+            }
+
+        }
 
 
         if ($request['type']==='video'){

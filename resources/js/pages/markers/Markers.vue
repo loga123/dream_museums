@@ -61,11 +61,9 @@
 
                 <template v-slot:cell(group_count)="data">
                   <template v-for="group in data.item.groups">
-<!--                    <b-link   :to="{ name: 'showGroup', params: { id: group.id } }">-->
                       <b-badge  @click="downloadPictureMarkerFromGroup(group.id)" pill variant="info">
                         {{group.name}}
                       </b-badge>
-<!--                    </b-link>&nbsp;-->
                   </template>
                 </template>
 
@@ -90,9 +88,6 @@
                     <i class="fa fa-trash red"></i>
                   </a>
 
-<!--                  <a v-if="data.item.video_path"  :href="data.item.video_path">
-                    <i class="fa fa-download"></i>
-                  </a>-->
 
                   <a v-b-popover.hover.top="$t('marker_download')" href="#" @click="downloadContentMarker(data.item.video_path,data.item.type,data.item.name,data.item.id)">
                     <i class="fa fa-download"></i>
@@ -101,7 +96,7 @@
                     <i class="fa fa-eye "></i>
                   </a>
 
-                  <a v-b-popover.hover.top="$t('marker_clone')" href="#" @click="cloneMarker(data.item)">
+                  <a v-if="data.item.clone===0" v-b-popover.hover.top="$t('marker_clone')" href="#" @click="cloneMarker(data.item)">
                     <i class="fa fa-clone "></i>
                   </a>
 
@@ -175,10 +170,20 @@
 
               <div class="modal-body">
 
-                <div class="form-group" v-if="form.clone">
-                  <label for="name">{{$t('name')}}</label>
-                  <input v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-                  <has-error :form="form" field="name"></has-error>
+                <div class="form-group" v-if="form.is_clone">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="name">{{$t('name')}}</label>
+                      <input disabled v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+
+                    </div>
+                    <div class="col-md-6">
+                      <label for="name">{{$t('other_name')}}</label>
+                      <input v-model="form.other_name" type="text" name="name" id="other_name" :placeholder="$t('other_name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('other_name') }">
+
+                    </div>
+                  </div>
+                <has-error :form="form" field="name"></has-error>
                 </div>
 
                 <div class="form-group" v-else>
@@ -227,11 +232,10 @@
                       <has-error :form="form" field="text"></has-error>
                     </div>
 
-<!--                    <label for="color_picker">{{$t('color_picker')}}</label>-->
-                  <div class="form__field">
+          <!-- <div class="form__field">
                     <div class="form__label">
                       <label for="color_picker">{{$t('color_picker')}}</label>
-<!--                      <strong>{{$t('color_picker')}}</strong>-->
+
                     </div>
                     <div class="form__input">
                       <v-swatches
@@ -244,25 +248,11 @@
                       ></v-swatches>
                       <has-error :form="form" field="color"></has-error>
                     </div>
-                  </div>
+                  </div>-->
 
-              </div>
+                </div>
 
                 <div v-show="form.type==='video'">
-
-<!--                    <div class="form-group">
-
-                      <label for="url_video">{{$t('url_video')}}</label>
-                      <input
-                        id="url_video"
-                        v-model="form.url_video"
-                        :class="{ 'is-invalid': form.errors.has('url_video') }"
-                        :placeholder="$t('url_video')"
-                        class="form-control"
-                      >
-                      &lt;!&ndash; <input v-model="form.text" type="text" name="name" id="text" :placeholder="$t('text')" class="form-control" :class="{ 'is-invalid': form.errors.has('text') }">&ndash;&gt;
-                      <has-error :form="form" field="url_video"></has-error>
-                    </div>-->
 
                   <div class="form-group">
                     <b-form-file
@@ -278,8 +268,6 @@
                     <p class="small">{{$t('format_video')}}</p>
                     <has-error :form="form" field="video"></has-error>
                   </div>
-
-
                 </div>
 
                 <div v-show="form.type==='picture'">
@@ -306,12 +294,9 @@
                     <p class="small">{{$t('format_picture')}}</p>
                     <has-error :form="form" field="picture"></has-error>
                   </div>
-
-
                 </div>
 
                 <div v-show="form.type==='models'">
-
                   <div class="form-group">
                     <label for="models">{{$t('models')}}</label>
                     <b-form-file
@@ -327,8 +312,6 @@
                     <p class="small">{{$t('format_model')}}</p>
                     <has-error :form="form" field="models"></has-error>
                   </div>
-
-
                 </div>
               </div>
 
@@ -501,12 +484,14 @@
           updated_at: '',
           //selected:'text',
           text:'',
-          color:'#000000',
+          //color:'#000000',
           type:'text',
           url_video:'',
           selected: [],
           selectAll: false,
-          clone:false,
+          is_clone:false,
+          clone:'',
+          other_name:''
         })
       }
     },
@@ -526,7 +511,7 @@
         this.form.fill(marker);
         this.form.name=this.new_name_marker;
         this.form.type=null;
-        this.form.clone=true;
+        this.form.is_clone=true;
         this.form.selected=[];
         this.form.selectAll=false;
 
@@ -641,7 +626,9 @@
         this.formFile.append('name', this.form.name);
         this.formFile.append('description', this.form.description);
         this.formFile.append('updated_at', this.form.updated_at);
+        this.formFile.append('clone', this.form.is_clone);
         this.formFile.append('text', this.form.text);
+        this.formFile.append('other_name', this.form.other_name);
         this.formFile.append('color', this.form.color);
         this.formFile.append('type', this.form.type);
 

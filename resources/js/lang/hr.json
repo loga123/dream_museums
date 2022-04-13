@@ -18,6 +18,8 @@
   "confirm_password": "Ponovite lozinku",
   "name": "Naziv",
   "name_placeholder": "Unesite naziv markera",
+  "other_name": "Dodatni naziv - opcionalno",
+  "other_name_placeholder" : "Unesite dodatni naziv",
   "toggle_navigation": "Toggle navigation",
   "home": "Home",
   "you_are_logged_in": "You are logged in!",

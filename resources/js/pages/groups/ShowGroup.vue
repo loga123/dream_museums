@@ -218,7 +218,23 @@
 
             <div class="modal-body">
 
-              <div class="form-group">
+              <div class="form-group" v-if="form.is_clone">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="name">{{$t('name')}}</label>
+                    <input disabled v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+
+                  </div>
+                  <div class="col-md-6">
+                    <label for="name">{{$t('other_name')}}</label>
+                    <input v-model="form.other_name" type="text" name="name" id="other_name" :placeholder="$t('other_name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('other_name') }">
+
+                  </div>
+                </div>
+                <has-error :form="form" field="name"></has-error>
+              </div>
+
+              <div class="form-group" v-else>
                 <label for="name">{{$t('name')}}</label>
                 <input v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
                 <has-error :form="form" field="name"></has-error>
@@ -264,11 +280,9 @@
                   <has-error :form="form" field="text"></has-error>
                 </div>
 
-                <!--                    <label for="color_picker">{{$t('color_picker')}}</label>-->
-                <div class="form__field">
+                <!--                <div class="form__field">
                   <div class="form__label">
                     <label for="color_picker">{{$t('color_picker')}}</label>
-                    <!--                      <strong>{{$t('color_picker')}}</strong>-->
                   </div>
                   <div class="form__input">
                     <v-swatches
@@ -281,25 +295,11 @@
                     ></v-swatches>
                     <has-error :form="form" field="color"></has-error>
                   </div>
-                </div>
+                </div>-->
 
               </div>
 
               <div v-show="form.type==='video'">
-
-                <!--                    <div class="form-group">
-
-                                      <label for="url_video">{{$t('url_video')}}</label>
-                                      <input
-                                        id="url_video"
-                                        v-model="form.url_video"
-                                        :class="{ 'is-invalid': form.errors.has('url_video') }"
-                                        :placeholder="$t('url_video')"
-                                        class="form-control"
-                                      >
-                                      &lt;!&ndash; <input v-model="form.text" type="text" name="name" id="text" :placeholder="$t('text')" class="form-control" :class="{ 'is-invalid': form.errors.has('text') }">&ndash;&gt;
-                                      <has-error :form="form" field="url_video"></has-error>
-                                    </div>-->
 
                 <div class="form-group">
                   <b-form-file
@@ -568,6 +568,9 @@ export default {
         selected: [],
         selectAll: false,
         group_id:'',
+        is_clone:false,
+        clone:'',
+        other_name:''
       }),
 
       formConnectMarkerAndGroup: new Form({
@@ -618,6 +621,7 @@ export default {
       this.form.fill(marker);
       this.form.name=this.new_name_marker;
       this.form.type=null;
+      this.form.is_clone=true;
       this.form.selected=[];
       this.form.selectAll=false;
 
@@ -746,6 +750,8 @@ export default {
       this.formFile.append('updated_at', this.form.updated_at);
       this.formFile.append('text', this.form.text);
       this.formFile.append('color', this.form.color);
+      this.formFile.append('clone', this.form.is_clone);
+      this.formFile.append('other_name', this.form.other_name);
       this.formFile.append('type', this.form.type);
       this.formFile.append('group_id', this.$route.params.id);
 

@@ -25,6 +25,7 @@ class CreateMarkersTable extends Migration
             $table->string('color')->nullable();
             $table->string('value')->nullable();
             $table->longText('text')->nullable();
+            $table->tinyInteger('clone')->default(0);
             $table->bigInteger('user_id')->unsigned()->index()->nullable();
             $table->bigInteger('group_id')->unsigned()->index()->nullable();
             $table->timestamps();
