@@ -230,9 +230,9 @@ class MarkerController extends BaseController
                         $ext = $file->extension();
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.'.$ext)){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext;
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -292,8 +292,8 @@ class MarkerController extends BaseController
                 $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                 $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
                 $marker->update();
 
             }
@@ -338,9 +338,9 @@ class MarkerController extends BaseController
                         $ext = $file->extension();
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -393,9 +393,9 @@ class MarkerController extends BaseController
                         $ext = $file->extension();
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'.glb')){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.glb';
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'.glb';
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -471,9 +471,9 @@ class MarkerController extends BaseController
 
         }
 
-        if (!is_dir('storage/markers/' . $this->id . '/' . $marker->id)) {
+        if (!is_dir(public_path('storage/markers/' . $this->id))) {
             // dir doesn't exist, make it
-            mkdir('storage/markers/' . $this->id . '/' . $marker->id);
+            mkdir(public_path('storage/markers/' . $this->id));
         }
 
 
@@ -513,9 +513,9 @@ class MarkerController extends BaseController
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -570,9 +570,9 @@ class MarkerController extends BaseController
                     $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                    $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                    $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                    $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.pdf';
+                    $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                    $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                    $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'.pdf';
                     $marker->update();
 
                 }
@@ -619,9 +619,9 @@ class MarkerController extends BaseController
 
                             if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
-                                $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                                $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                                $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
+                                $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                                $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                                $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                                 $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                                 $marker->update();
 
@@ -676,9 +676,9 @@ class MarkerController extends BaseController
 
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.glb')){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -880,9 +880,9 @@ class MarkerController extends BaseController
 
         }
 
-        if (!is_dir('storage/markers/' . $this->id . '/' . $marker->id)) {
+        if (!is_dir(public_path('storage/markers/' . $this->id))) {
             // dir doesn't exist, make it
-            mkdir('storage/markers/' . $this->id . '/' . $marker->id);
+            mkdir(public_path('storage/markers/' . $this->id));
         }
 
 
@@ -934,9 +934,9 @@ class MarkerController extends BaseController
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -997,9 +997,9 @@ class MarkerController extends BaseController
                     $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
-                    $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                    $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                    $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'.pdf';
+                    $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                    $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                    $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'.pdf';
                     $marker->update();
 
                 }
@@ -1053,9 +1053,9 @@ class MarkerController extends BaseController
 
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.'.$ext)){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.'.$ext;
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
@@ -1118,9 +1118,9 @@ class MarkerController extends BaseController
 
                         if(Storage::disk('public')->putFileAs('markers/'.$this->id,$file,$marker->id.'_orginal.glb')){
 
-                            $marker->image_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.png';
-                            $marker->file_marker='/storage/markers/'.$this->id.'/'.$marker->id.'.patt';
-                            $marker->video_path='/storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
+                            $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
+                            $marker->file_marker='storage/markers/'.$this->id.'/'.$marker->id.'.patt';
+                            $marker->video_path='storage/markers/'.$this->id.'/'.$marker->id.'_orginal.glb';
                             $marker->iset_files='storage/markers/'.$this->id.'/'.$marker->id.'';
                             $marker->update();
 
