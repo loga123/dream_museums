@@ -525,7 +525,6 @@ class MarkerController extends BaseController
 
                         $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                         $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
@@ -588,7 +587,6 @@ class MarkerController extends BaseController
 
                     PDF::loadView('export/exportTextMarkerCreate',$data)->save(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.pdf'));
 
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
                     $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
@@ -634,7 +632,6 @@ class MarkerController extends BaseController
 
                         //$i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                         $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
@@ -691,7 +688,6 @@ class MarkerController extends BaseController
 
                     $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                     $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
@@ -948,7 +944,6 @@ class MarkerController extends BaseController
 
                         $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                         $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
@@ -1017,7 +1012,6 @@ class MarkerController extends BaseController
 
                     PDF::loadView('export/exportTextMarkerCreate',$data)->save(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.pdf'));
 
-                    $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                     $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
                     $marker->image_marker='storage/markers/'.$this->id.'/'.$marker->id.'.png';
@@ -1070,7 +1064,6 @@ class MarkerController extends BaseController
 
                         //$i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                         $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
@@ -1135,7 +1128,6 @@ class MarkerController extends BaseController
 
                         $i->saveMarker(storage_path('dependies/nft/img/'.$marker->id.'.jpeg'));
                         $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.jpeg'));
-                        $i->saveMarker(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.png'));
                         $i->savePatt(public_path('storage/markers/'.$this->id.'/'.$marker->id.'.patt'));
 
 
