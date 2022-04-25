@@ -339,7 +339,7 @@
               <div class="modal-body">
 
                 <div class="form-group">
-                  <vue-bootstrap-typeahead
+                  <vue-typeahead-bootstrap
                     :data="groups"
                     v-model="groupsSearch"
                     size="lg"
@@ -347,7 +347,7 @@
                     :serializer="s => s.name"
                     :placeholder="$t('input_name_marker')"
                     @hit="selectedGroups = $event"
-                  ></vue-bootstrap-typeahead>
+                  ></vue-typeahead-bootstrap>
                   <has-error :form="formGroupSave" field="marker_id"></has-error>
                 </div>
               </div>
@@ -374,7 +374,7 @@
   import VButton from "../../components/Button";
   import VSwatches from 'vue-swatches'
   import { VueEditor } from "vue2-editor";
-  import VueBootstrapTypeahead from 'vue-bootstrap-typeahead';
+  import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap';
 
   // Import the styles too, globally
   import "vue-swatches/dist/vue-swatches.css"
@@ -387,7 +387,7 @@
       VButton,
       VSwatches,
       VueEditor,
-      VueBootstrapTypeahead,
+      VueTypeaheadBootstrap,
       ModelGltf
 
     },

@@ -87,21 +87,41 @@ class MarkerController extends BaseController
     public function index_all(){
         if ($search = \Request::get('q')) {
             if($this->user->hasRole(['SUDO','Admin','Super admin'])) {
-                return response()->json(
-                    Marker::where(function ($query) use ($search) {
-                        $query->where('name', 'LIKE', "%$search%")
-                            ->orWhere('description','LIKE',"%$search%");
-                    })
-                        ->get());
+                $markers = Marker::where(function ($query) use ($search) {
+                    $query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('description','LIKE',"%$search%");
+                });
             }
-
-            return response()->json(
+            else {
                 Marker::where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', "%$search%")
-                        ->orWhere('description','LIKE',"%$search%");
-                })
-                    ->where('user_id',$this->user->id)
-                    ->get());
+                    ->orWhere('description','LIKE',"%$search%");
+                })->where('user_id',$this->user->id);
+            }
+
+            $noGroup = \Request::get('nogroup');
+            if(!empty($noGroup)) {
+                $markers = $markers->whereDoesntHave('groups', function ($query) use ($noGroup) {
+                    return $query->where('group_id', $noGroup);
+                });
+            }
+
+            $userMarkers = [];
+            $otherMarkers = [];
+            $markers = $markers->get();
+            foreach($markers as $marker) {
+                if($marker->user_id == $this->user->id)
+                    $userMarkers[] = $marker;
+                else {
+                    $otherMarkers[] = $marker;
+                }
+            }
+
+            usort($userMarkers, [$this, "markerSort"]);
+            usort($otherMarkers, [$this, "markerSort"]);
+            $markers = array_merge($userMarkers, $otherMarkers);
+            
+            return response()->json($markers);
         }
     }
 
@@ -1262,9 +1282,9 @@ class MarkerController extends BaseController
         }
         Log::error('Nauspjeh - Marker nije obrisan iz grupe: "' . $group['name']. '".  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
         return $this->sendResponseError(trans('validation.custom.error'), trans('validation.custom.marker_group_delete_error'));
+    }
 
-
-
-
+    private function markerSort($a, $b) {
+        return strtolower($a->name) >= strtolower($b->name);
     }
 }
