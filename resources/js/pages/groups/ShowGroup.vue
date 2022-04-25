@@ -393,7 +393,7 @@
           <div class="modal-body">
 
             <div class="form-group">
-              <vue-bootstrap-typeahead
+              <vue-typeahead-bootstrap
                 :data="markers"
                 v-model="markersSearch"
                 size="lg"
@@ -401,8 +401,9 @@
                 :class="{ 'is-invalid': formConnectMarkerAndGroup.errors.has('marker_id') }"
                 :serializer="s => s.name"
                 :placeholder="$t('input_name_marker')"
+                :disableSort="true"
                 @hit="selectedMarkers = $event"
-              ></vue-bootstrap-typeahead>
+              ></vue-typeahead-bootstrap>
               <has-error :form="formConnectMarkerAndGroup" field="marker_id"></has-error>
             </div>
           </div>
@@ -423,7 +424,7 @@
 <script>
 
 import {ModelGltf}  from 'vue-3d-model';
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
+import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
 import moment from "moment";
 import VSwatches from 'vue-swatches'
 // Import the styles too, globally
@@ -431,7 +432,7 @@ import "vue-swatches/dist/vue-swatches.css"
 
 export default {
   components:{
-    VueBootstrapTypeahead,
+    VueTypeaheadBootstrap,
     ModelGltf,
     VSwatches
   },
@@ -728,8 +729,9 @@ export default {
     },
 
     async autoComplete(query){
-      axios.get('/api/markers/' + '?q=' + query).then(({data}) => {
-        this.markers  = data
+      const group = this.$route.path.split('/')[2];
+      axios.get('/api/markers/' + '?q=' + query + '&nogroup=' + group).then(({data}) => {
+        this.markers  = data;
       });
 
     },
