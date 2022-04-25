@@ -41,7 +41,10 @@ class ProfileController extends BaseController
 
             $userPhoto = 'img/profile/'.$currentPhoto;
 
-            if(file_exists($userPhoto) and $userPhoto!='public/img/profile/default.png'){
+            $user->photo_url = $name;
+            $user->save();
+
+            if(file_exists($userPhoto) and $userPhoto!='img/profile/default.png'){
                 @unlink($userPhoto);
                 Log::info('Treunutna slika profila obrisana i dodana nova');
             }
