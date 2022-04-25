@@ -758,7 +758,7 @@ class MarkerController extends BaseController
     public function update(Request $request, Marker $marker)
     {
         $this->validate($request,[
-            'name'=>'required|string|max:100',
+            'name'=>'required|unique:markers,name,NULL,id,user_id,'.$this->user->id.'|string|max:100',
             'description'=>'required|string|max:999',
 
         ],
