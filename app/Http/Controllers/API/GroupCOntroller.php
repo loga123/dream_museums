@@ -116,7 +116,7 @@ class GroupCOntroller extends BaseController
 
         $this->validate($request,[
             'name' => 'required|string|max:191',
-            'description' => 'required|string|max:999',
+            'description' => 'required|string|max:2500',
             'wordDoc' => 'required|mimes:doc,docx,pdf,rtf,ods'
         ],
         [
@@ -205,7 +205,7 @@ class GroupCOntroller extends BaseController
 
         $this->validate($request,[
             'name' => 'required|string|max:191',
-            'description' => 'required|string|max:999',
+            'description' => 'required|string|max:2500',
             'wordDoc' => 'nullable|mimes:doc,docx,pdf,rtf,ods'
         ],
         [
