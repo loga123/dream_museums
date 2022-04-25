@@ -510,7 +510,7 @@
         this.deleteClassModal();
         this.form.fill(marker);
         this.form.name=this.new_name_marker;
-        this.form.type=null;
+        this.form.type=marker.type;
         this.form.is_clone=true;
         this.form.selected=[];
         this.form.selectAll=false;

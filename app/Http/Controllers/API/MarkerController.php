@@ -120,7 +120,7 @@ class MarkerController extends BaseController
             usort($userMarkers, [$this, "markerSort"]);
             usort($otherMarkers, [$this, "markerSort"]);
             $markers = array_merge($userMarkers, $otherMarkers);
-            
+
             return response()->json($markers);
         }
     }
@@ -452,14 +452,14 @@ class MarkerController extends BaseController
 
         $this->validate($request,
             [
-            'name'=>'required|string|max:100',
+            'name'=>'required|unique:markers,name,NULL,id,user_id,'.$this->user->id.'|string|max:100',
             'description'=>'required|string|max:999',
             'type'=> 'required|string|max:100',
             'text'=>'sometimes|required_if:type,==,text|nullable|max:999',
             //'url_video'=> 'required_if:type,==,video|url',
-            //'video' => 'required_if:type,==,video|nullable|mimes:mp4',
-            //'picture' => 'required_if:type,==,picture|nullable|mimes:jpg,jpeg,png',
-            //'models' => 'bail|required_if:type,===,models|custom_extension:glb'
+            'video' => 'required_if:type,==,video|nullable|mimes:mp4',
+            'picture' => 'required_if:type,==,picture|nullable|mimes:jpg,jpeg,png',
+            'models' => 'bail|required_if:type,===,models|nullable|custom_extension:glb'
 
         ],
         [
@@ -476,6 +476,7 @@ class MarkerController extends BaseController
             'picture.required_if' => 'Niste unijeli sliku!',
             'picture.mimes' => 'Slika mora biti u formatu :values!',
             'models.custom_extension'=> 'Model mora biti u formatu glb',
+            'models.required_if' => 'Niste unijeli model!'
 
         ]
         );
@@ -757,7 +758,7 @@ class MarkerController extends BaseController
     public function update(Request $request, Marker $marker)
     {
         $this->validate($request,[
-            'name'=>'required|string|max:100',
+            'name'=>'required|unique:markers,name,NULL,id,user_id,'.$this->user->id.'|string|max:100',
             'description'=>'required|string|max:999',
 
         ],
@@ -859,16 +860,17 @@ class MarkerController extends BaseController
             return $this->sendResponseError('GREŠKA', 'Nemate ovlasti. Obratite se Administratoru');
         }*/
 
-        $this->validate($request,[
-            'name'=>'required|string|max:100',
+        $this->validate($request,
+            [
+            'name'=>'required|unique:markers,name,NULL,id,user_id,'.$this->user->id.'|string|max:100',
             'description'=>'required|string|max:999',
             'type'=> 'required|string|max:100',
             'text'=>'sometimes|required_if:type,==,text|nullable|max:999',
-            'group_id'=> 'required',
+            'group_id'=> 'required|exists:groups,id',
             //'url_video'=> 'required_if:type,==,video|url',
-            // 'video' => 'required_if:type,==,video|nullable|mimes:mp4',
-            //'picture' => 'required_if:type,==,picture|nullable|mimes:jpg,jpeg,png',
-            // 'models' => 'required_if:type,==,models|sometimes|custom_extension:glb'
+            'video' => 'required_if:type,==,video|nullable|mimes:mp4',
+            'picture' => 'required_if:type,==,picture|nullable|mimes:jpg,jpeg,png',
+            'models' => 'bail|required_if:type,===,models|nullable|custom_extension:glb'
 
         ],
         [
@@ -885,6 +887,7 @@ class MarkerController extends BaseController
             'picture.required_if' => 'Niste unijeli sliku!',
             'picture.mimes' => 'Slika mora biti u formatu :values!',
             'models.custom_extension'=> 'Model mora biti u formatu glb',
+            'models.required_if' => 'Niste unijeli model!'
 
         ]);
 
