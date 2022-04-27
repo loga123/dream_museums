@@ -480,7 +480,7 @@ class MarkerController extends BaseController
 
         if (!is_dir(public_path('storage/markers/' . $this->id))) {
             // dir doesn't exist, make it
-            mkdir(public_path('storage/markers/' . $this->id));
+            mkdir(public_path('storage/markers/' . $this->id), 0777, true);
         }
 
 
@@ -897,7 +897,7 @@ class MarkerController extends BaseController
 
         if (!is_dir(public_path('storage/markers/' . $this->id))) {
             // dir doesn't exist, make it
-            mkdir(public_path('storage/markers/' . $this->id));
+            mkdir(public_path('storage/markers/' . $this->id), 0777, true);
         }
 
 
