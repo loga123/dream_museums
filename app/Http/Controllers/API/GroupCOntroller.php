@@ -164,6 +164,7 @@ class GroupCOntroller extends BaseController
      */
     public function show(Group $group)
     {
+        Log::info($group->load(['markers','user'])->loadCount('markers'));
         return response()->json(
             $group->load(['markers','user'])->loadCount('markers')
 

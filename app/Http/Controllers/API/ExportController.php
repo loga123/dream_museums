@@ -15,10 +15,14 @@ class ExportController extends Controller
     public function generatePDF(Group $group)
     {
         $markers = $group->markers->toArray();
-        $data = compact('markers');
-       // Log::alert(json_encode($markers));
-        //$data = ['title' => 'Export picture marker'];
-        $pdf = PDF::loadView('export/exportPicturesMarker',$data);
+
+        $html = '<html><body>';
+        foreach($markers as $obj) {
+            $html = $html . $this->htmlNameDescription($obj) . '<br><br>';
+            $html = $html . $this->htmlImage($obj);
+        }
+        $html = $html . '</body></html>';
+        $pdf = PDF::loadHTML($html);
 
         return $pdf->download('markers.pdf');
     }
@@ -26,13 +30,26 @@ class ExportController extends Controller
 
     public function generatePdfWithText(Marker $marker)
     {
-        $name = $marker->name;
-        $marker = $marker->toArray();
-        $data = compact('marker');
+        $html = '<html><body>';
+        $html = $html . $this->htmlNameDescription($marker);
+        $html = $html . $this->htmlText($marker);
+        $html = $html . '</body></html>';
+        $pdf = PDF::loadHTML($html);
 
-        $pdf = PDF::loadView('export/exportTextMarker',$data);
-
-        return $pdf->download($name.'.pdf');
+        return $pdf->download($marker['name'].'.pdf');
     }
 
+    private function htmlNameDescription($marker) {
+        $html = '<h1>' . $marker['name'] . '</h1>';
+        return $html . '<p>' . $marker['description'] . '</h1>';
+    }
+
+    private function htmlText($marker) {
+        return '<p>' . $marker['text'] . '</p>';
+    }
+
+    private function htmlImage($marker) {
+        $img = public_path($marker['image_marker']);
+        return '<img src="' . $img . '">';
+    }
 }
