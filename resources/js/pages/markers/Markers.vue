@@ -115,6 +115,107 @@
             </div>
           </div>
           <!-- /.card -->
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">{{$t('markers')}} &nbsp</h3>
+              </div>
+
+              <div class="card-tools">
+                <b-form-group>
+                  <b-input-group>
+                    <b-form-input
+                      v-model="filterOther"
+                      type="search"
+                      @keyup="searchitother"
+                      :placeholder="$t('search')"
+                    ></b-form-input>
+                    <b-input-group-append @click="searchitother">
+                      <b-button :disabled="!filterOther" @click="filterOther = ''">{{$t('delete')}}</b-button>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+
+                <b-form-group
+                  :label="$t('view')"
+                  label-for="per-page-select"
+                  label-cols-sm="6"
+                  label-cols-md="4"
+                  label-cols-lg="3"
+                  label-align-sm="right"
+                  label-size="sm"
+                  class="mb-0"
+                >
+                  <b-form-select
+                    id="per-page-select"
+                    v-model="numberPerPage"
+                    :options=this.$pageOptions
+                    @change="getOtherResults(1)"
+                    size="sm"
+                  ></b-form-select>
+                </b-form-group>
+
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <b-table sticky-header id="Markers" no-local-sorting responsive hover :items="otherMarkers.data" :fields="fieldsOtherMarkers"  :sort-by.sync="sortBy"  :sort-desc.sync="sortDesc"  @sort-changed="getOtherResults(1)">
+
+                <template v-slot:cell(group_count)="data">
+                  <template v-for="group in data.item.groups">
+                      <b-badge  @click="downloadPictureMarkerFromGroup(group.id)" pill variant="info">
+                        {{group.name}}
+                      </b-badge>
+                  </template>
+                </template>
+
+                <template v-slot:cell(marker)="data">
+                  <a  href="#" @click="downloadMarker(data.item.image_marker,data.item.id)">
+                    <i class="fa fa-download blue"></i>
+                  </a>
+                </template>
+
+                <!--<template v-slot:cell(name)="data">
+                  <router-link :to="{ name: 'showMarker', params: {id: data.item.id } }">
+                    {{ data.value}}
+                  </router-link>
+                </template>-->
+
+                <template v-slot:cell(action)="data">
+                    <a v-if="isPrivilegedUser" v-b-popover.hover.top="$t('marker_edit')" href="#" @click="editModal(data.item)">
+                      <i class="fa fa-edit blue"></i>
+                    </a>
+
+                    <a v-if="isPrivilegedUser" v-b-popover.hover.top="$t('marker_trash')" href="#" @click="deleteMarker(data.item)">
+                      <i class="fa fa-trash red"></i>
+                    </a>
+
+                    <a v-b-popover.hover.top="$t('marker_download')" href="#" @click="downloadContentMarker(data.item.video_path,data.item.type,data.item.name,data.item.id)">
+                      <i class="fa fa-download"></i>
+                    </a>
+
+                    <a v-b-popover.hover.top="$t('marker_view')" href="#" @click="getPictureForMarker(data.item.video_path,data.item.type,data.item.text)">
+                      <i class="fa fa-eye "></i>
+                    </a>
+
+                    <a v-if="data.item.clone===0" v-b-popover.hover.top="$t('marker_clone')" href="#" @click="cloneMarker(data.item)">
+                      <i class="fa fa-clone "></i>
+                    </a>
+                </template>
+
+              </b-table>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <pagination :limit=2 :data="otherMarkers" @pagination-change-page="getOtherResults" >
+                <span slot="prev-nav">&lt; {{$t('previous')}}</span>
+                <span slot="next-nav">{{$t('next')}} &gt;</span>
+              </pagination>
+              <p>{{$t('showing')}} {{this.otherMarkers.from}} - {{this.otherMarkers.to}} {{$t('to')}} {{this.otherMarkers.total}} {{$t('results')}} </p>
+            </div>
+          </div>
+          <!-- /.card -->
         </div>
       </div>
 
@@ -411,16 +512,65 @@
         selectedGroups: null,
         numberPerPage:50,
         filter:null,
+        filterOther:null,
         sortBy: 'name',
         sortDesc: false,
         editmode: false,
         markers : {},
+        otherMarkers: {}, // non personal markers
         search:"",
         fieldsMarkers: [
           {
             key: 'select',
             stickyColumn: true,
           },
+          {
+            label: 'ID',
+            key: 'id',
+            sortable: true,
+          },
+          {
+            label: this.$t('name') ,
+            key: 'name',
+            sortable: true,
+            stickyColumn:true,
+          },
+
+          {
+            label: this.$t('description') ,
+            key: 'description',
+            sortable: true,
+            stickyColumn:true,
+          },
+          {
+            label: this.$t('object_type') ,
+            key: 'type',
+            sortable: true,
+            stickyColumn:true,
+          },
+          {
+            label: this.$t('created_at'),
+            key: 'updated_at',
+            sortable: true,
+            formatter: (value) => {
+              return moment(value).format('DD.MM.YYYY');
+            }
+          },
+          {
+            label: this.$t('groups'),
+            key: 'group_count',
+          },
+          {
+            label: this.$t('marker_picture'),
+            key: 'marker',
+          },
+          {
+            label: this.$t('action'),
+            key:'action',
+
+          },
+        ],
+        fieldsOtherMarkers: [
           {
             label: 'ID',
             key: 'id',
@@ -492,7 +642,8 @@
           is_clone:false,
           clone:'',
           other_name:''
-        })
+        }),
+        isPrivilegedUser: false
       }
     },
 
@@ -744,13 +895,14 @@
       },
 
       searchit: _.debounce(() => {Fire.$emit('searching');},500),
+      searchitother: _.debounce(() => {Fire.$emit('searchingOther');},500),
 
       getResults(page = 1) {
 
         let query = this.filter;
         let sort = this.sortBy;
         let sortDesc = this.sortDesc;
-        let perPage= this.numberPerPage;
+        let perPage = this.numberPerPage;
 
         let route="/api/marker?page="+page+"&sort="+sort+"&desc="+sortDesc+"&perPage="+perPage;
         if(query){
@@ -760,9 +912,25 @@
         axios.get(route)
           .then(response => {
             this.markers = response.data;
+        });
+      },
+
+      getOtherResults(page = 1) {
+
+        let query = this.filterOther;
+        let sort = this.sortBy;
+        let sortDesc = this.sortDesc;
+        let perPage = this.numberPerPage;
+
+        let route="/api/marker?page="+page+"&sort="+sort+"&desc="+sortDesc+"&perPage="+perPage+"&personal=false";
+        if(query){
+          route+="&q="+query;
+        }
+
+        axios.get(route)
+          .then(response => {
+            this.otherMarkers = response.data;
           });
-
-
       },
 
       updateMarker(){
@@ -880,6 +1048,18 @@
           })
       },
 
+      setIsPrivileged() {
+          axios.get('api/user/')
+            .then(response => {
+              let data = response.data;
+              for(let i = 0; i < data.roles.length; i++) {
+                  if(data.roles[i].name == "SUDO" || data.roles[i].name == "Super Admin") {
+                      this.isPrivilegedUser = true;
+                      break;
+                  }
+              }
+          });
+      }
     },
 
     watch: {
@@ -887,16 +1067,21 @@
     },
     created() {
       this.getResults();
+      this.getOtherResults();
 
       Fire.$on('searching',() => {
         this.getResults(1);
       });
 
+      Fire.$on('searchingOther',() => {
+          this.getOtherResults(1);
+      });
 
       Fire.$on('AfterCreate',() => {
         this.getResults();
       });
 
+      this.setIsPrivileged();
     },
 
   }
