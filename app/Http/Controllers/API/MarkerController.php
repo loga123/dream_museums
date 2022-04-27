@@ -30,6 +30,11 @@ class MarkerController extends BaseController
         $sortDesc = $request['desc']== 'false' ? 'asc' : 'desc' ;
         $perPage = $request['perPage'];
 
+        if(empty($request['personal']) || $request['personal'] == 'true')
+            $personal = true;
+        else
+            $personal = false;
+
         //ako nema broja po stranici stavi na najmanji
         if (empty($perPage)){
             $perPage=$this->pageOptions[0];
@@ -47,37 +52,18 @@ class MarkerController extends BaseController
             $perPage = $how;
         }
 
-        if($this->user->hasRole(['SUDO','Admin','Super admin'])){
-            $all = Marker::where(function($query) use ($search){
-                $query->where('name','LIKE',"%$search%");
-                /*->orWhereHas('permissions', function ($query) use ($search) {
-                    $query->where('name','LIKE',"%$search%");
-                });*/
-            })/*->withCount('permissions')*/
-            /*->with('permissions')*/
-            ->with('groups')
-            ->orderBy($sortBy,$sortDesc)
-                ->paginate($perPage);
+        $all = Marker::where(function($query) use ($search){
+            $query->where('name','LIKE',"%$search%")->orWhere('description','LIKE',"%$search%");
+        });
 
-            return $all;
-        }else if($this->user->hasRole('Teacher')){
-            $all = Marker::where(function($query) use ($search){
-                $query->where('name','LIKE',"%$search%")
-                    ->orWhere('description','LIKE',"%$search%");
-                /*->orWhereHas('permissions', function ($query) use ($search) {
-                    $query->where('name','LIKE',"%$search%");
-                });*/
-            })/*->withCount('permissions')*/
-            /*->with('permissions')*/
-                ->where('user_id',$this->id)
-                ->with('groups')
-            ->orderBy($sortBy,$sortDesc)
-                ->paginate($perPage);
+        if($personal)
+            $all = $all->where('user_id', $this->user->id);
+        else
+            $all = $all->where('user_id', '<>', $this->user->id);
 
-            return $all;
-        }
+        $all = $all->with('groups')->orderBy($sortBy,$sortDesc)->paginate($perPage);
 
-
+        return $all;
     }
 
 
@@ -753,6 +739,11 @@ class MarkerController extends BaseController
      */
     public function update(Request $request, Marker $marker)
     {
+        if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($marker->user_id !== $this->user->id)) {
+            Log::error('NEMATE OVLASTI ZA AŽURIRANJE STAVKE.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
+            return $this->sendResponseError('GREŠKA', 'Nemate ovlasti. Obratite se Administratoru');
+        }
+
         $this->validate($request,[
             'name'=>'required|unique:markers,name,NULL,id,user_id,'.$this->user->id.'|string|max:100',
             'description'=>'required|string|max:999',
@@ -788,6 +779,11 @@ class MarkerController extends BaseController
      */
     public function destroy(Marker $marker)
     {
+        if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($marker->user_id !== $this->user->id)) {
+            Log::error('NEMATE OVLASTI ZA AŽURIRANJE STAVKE.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
+            return $this->sendResponseError('GREŠKA', 'Nemate ovlasti. Obratite se Administratoru');
+        }
+
         $extension = ['.png','.jpeg','.jpg','_orginal.png','_orginal.jpg','_orginal.jpeg','.patt','.iset','.fset','.fset3','.mp4','.mp3'];
 
         //delete markers and dependices
