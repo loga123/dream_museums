@@ -4,7 +4,9 @@
 
 
       <div class="row-cols-6">
-        <img src="/img/dream.png" class="brand-image  elevation-3" style="opacity: .8">
+          <router-link to="/markers">
+            <img id="logo-welcome" src="/img/dream.png" class="brand-image  elevation-3" style="opacity: .8">
+          <router-link>
       </div>
 
       <div class="title mb-4">

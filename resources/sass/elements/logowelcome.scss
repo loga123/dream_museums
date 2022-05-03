@@ -1,0 +1,27 @@
+#logo-welcome {
+  width: 100%;
+}
+
+@include media-breakpoint-up(sm) {
+  #logo-welcome {
+    width: 55.2083333%;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  #logo-welcome {
+    width: 44.1666667%;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  #logo-welcome {
+    width: 33.125%;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #logo-welcome {
+    width: 27.8947368%;
+  }
+}
