@@ -18,8 +18,9 @@ class ExportController extends Controller
 
         $html = '<html><body>';
         foreach($markers as $obj) {
-            $html = $html . $this->htmlNameDescription($obj) . '<br><br>';
-            $html = $html . $this->htmlImage($obj);
+            $content = $this->htmlNameDescription($obj) . '<br><br>';
+            $content = $content . $this->htmlImage($obj);
+            $html = $html . $this->htmlPageBreak($content);
         }
         $html = $html . '</body></html>';
         $pdf = PDF::loadHTML($html);
@@ -51,5 +52,10 @@ class ExportController extends Controller
     private function htmlImage($marker) {
         $img = public_path($marker['image_marker']);
         return '<img src="' . $img . '">';
+    }
+
+    private function htmlPageBreak($html) {
+        $div = '<div style="break-after: always; page-break-after: always;">' . $html . '</div>';
+        return $div;
     }
 }
