@@ -79,7 +79,7 @@
                   <i class="fa fa-trash red"></i>
                 </a>
 
-                <a v-b-popover.hover.top="$t('marker_clone')" href="#" @click="cloneMarker(data.item)">
+                <a v-if="data.item.clone == 0" v-b-popover.hover.top="$t('marker_clone')" href="#" @click="cloneMarker(data.item)">
                   <i class="fa fa-clone "></i>
                 </a>
 <!--                <a href="#" v-on:click="deleteaMarker(data.item)"><i class="fa fa-trash red"></i></a>-->
