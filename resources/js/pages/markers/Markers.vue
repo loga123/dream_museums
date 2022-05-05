@@ -17,7 +17,7 @@
                     <b-form-input
                       v-model="filter"
                       type="search"
-                      @keyup="searchit"
+                      @input="searchit"
                       :placeholder="$t('search')"
                     ></b-form-input>
                     <b-input-group-append @click="searchit">
@@ -128,7 +128,7 @@
                     <b-form-input
                       v-model="filterOther"
                       type="search"
-                      @keyup="searchitother"
+                      @input="searchitother"
                       :placeholder="$t('search')"
                     ></b-form-input>
                     <b-input-group-append @click="searchitother">
