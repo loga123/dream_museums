@@ -741,7 +741,7 @@ class MarkerController extends BaseController
     {
         if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($marker->user_id !== $this->user->id)) {
             Log::error('NEMATE OVLASTI ZA AŽURIRANJE STAVKE.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
-            return $this->sendResponseError('GREŠKA', 'Nemate ovlasti. Obratite se Administratoru');
+            return $this->sendResponseError(trans('validation.custom.error'), trans('validation.custom.permission_error'));
         }
 
         $this->validate($request,[
@@ -781,7 +781,7 @@ class MarkerController extends BaseController
     {
         if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($marker->user_id !== $this->user->id)) {
             Log::error('NEMATE OVLASTI ZA AŽURIRANJE STAVKE.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
-            return $this->sendResponseError('GREŠKA', 'Nemate ovlasti. Obratite se Administratoru');
+            return $this->sendResponseError(trans('validation.custom.error'), trans('validation.custom.permission_error'));
         }
 
         $extension = ['.png','.jpeg','.jpg','_orginal.png','_orginal.jpg','_orginal.jpeg','.patt','.iset','.fset','.fset3','.mp4','.mp3'];
