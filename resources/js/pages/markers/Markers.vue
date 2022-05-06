@@ -270,18 +270,19 @@
             <form enctype="multipart/form-data" @submit.prevent="editmode ? updateMarker() : createMarker()">
 
               <div class="modal-body">
-
                 <div class="form-group" v-if="form.is_clone">
                   <div class="row">
                     <div class="col-md-6">
                       <label for="name">{{$t('name')}}</label>
                       <input disabled v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-
+                      <has-error :form="form" field="name"></has-error>
                     </div>
                     <div class="col-md-6">
-                      <label for="name">{{$t('other_name')}}</label>
-                      <input v-model="form.other_name" type="text" name="name" id="other_name" :placeholder="$t('other_name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('other_name') }">
-
+                      <label for="marker_suffix">{{$t('suffix')}}</label>
+                      <input v-model="markerSuffix" type="text" name="name" id="marker_suffix" :placeholder="$t('suffix_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                      <div v-if="form.errors.has('name')" class="invalid-feedback">
+                        {{$t('suffix_error')}}
+                      </div>
                     </div>
                   </div>
                 <has-error :form="form" field="name"></has-error>
@@ -641,26 +642,41 @@
           selectAll: false,
           is_clone:false,
           clone:'',
-          other_name:''
         }),
-        isPrivilegedUser: false
+        isPrivilegedUser: false,
+        markerSuffix_: '',
+        originalMarkerName: ''
+      }
+    },
+
+    computed: {
+      markerSuffix: {
+        get() {
+          console.log('Get');
+          return this.markerSuffix_;
+        },
+
+        set(value) {
+          console.log('Set');
+          this.markerSuffix_ = value;
+          this.form.name = this.originalMarkerName + this.markerSuffix_;
+        }
       }
     },
 
 
     methods: {
 
-      async cloneMarker(marker){
+      cloneMarker(marker){
+        this.form.errors.errors = {};
 
-        await axios.get('/api/check-name?name='+marker.name)
-          .then(response => {
-            this.new_name_marker = response.data;
-          });
+        this.originalMarkerName = marker.name;
+        this.markerSuffix = '';
 
         this.editmode = false;
         this.deleteClassModal();
+
         this.form.fill(marker);
-        this.form.name=this.new_name_marker;
         this.form.type=marker.type;
         this.form.is_clone=true;
         this.form.selected=[];
@@ -779,7 +795,6 @@
         this.formFile.append('updated_at', this.form.updated_at);
         this.formFile.append('clone', this.form.is_clone);
         this.formFile.append('text', this.form.text);
-        this.formFile.append('other_name', this.form.other_name);
         this.formFile.append('color', this.form.color);
         this.formFile.append('type', this.form.type);
 

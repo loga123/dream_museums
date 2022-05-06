@@ -223,12 +223,14 @@
                   <div class="col-md-6">
                     <label for="name">{{$t('name')}}</label>
                     <input disabled v-model="form.name" type="text" name="name" id="name" :placeholder="$t('name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-
+                    <has-error :form="form" field="name"></has-error>
                   </div>
                   <div class="col-md-6">
-                    <label for="name">{{$t('other_name')}}</label>
-                    <input v-model="form.other_name" type="text" name="name" id="other_name" :placeholder="$t('other_name_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('other_name') }">
-
+                    <label for="suffix">{{$t('suffix')}}</label>
+                    <input v-model="markerSuffix" type="text" name="name" id="suffix" :placeholder="$t('suffix_placeholder')" class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                    <div v-if="form.errors.has('name')" class="invalid-feedback">
+                      {{$t('suffix_error')}}
+                    </div>
                   </div>
                 </div>
                 <has-error :form="form" field="name"></has-error>
@@ -570,8 +572,7 @@ export default {
         selectAll: false,
         group_id:'',
         is_clone:false,
-        clone:'',
-        other_name:''
+        clone:''
       }),
 
       formConnectMarkerAndGroup: new Form({
@@ -579,8 +580,24 @@ export default {
           group_id : null,
       }),
 
+      markerSuffix_: '',
+      originalMarkerName: ''
     }
   },
+
+  computed: {
+    markerSuffix: {
+      get() {
+        return this.markerSuffix_;
+      },
+
+      set(value) {
+        this.markerSuffix_ = value;
+        this.form.name = this.originalMarkerName + this.markerSuffix_;
+      }
+    }
+  },
+
   methods:{
 
     saveMarkersInGroup() {
@@ -610,21 +627,19 @@ export default {
       })
     },
 
-    async cloneMarker(marker){
-
-      await axios.get('/api/check-name?name='+marker.name)
-        .then(response => {
-          this.new_name_marker = response.data;
-        });
+    cloneMarker(marker){
+      this.originalMarkerName = marker.name;
+      this.markerSuffix = '';
 
       this.editmode = false;
       this.deleteClassModal();
+
+      this.form.errors.errors = {};
       this.form.fill(marker);
-      this.form.name=this.new_name_marker;
-      this.form.type=null;
-      this.form.is_clone=true;
-      this.form.selected=[];
-      this.form.selectAll=false;
+      this.form.type = marker.type;
+      this.form.is_clone = true;
+      this.form.selected = [];
+      this.form.selectAll = false;
 
       $('#addNew').modal('show');
     },
@@ -753,7 +768,6 @@ export default {
       this.formFile.append('text', this.form.text);
       this.formFile.append('color', this.form.color);
       this.formFile.append('clone', this.form.is_clone);
-      this.formFile.append('other_name', this.form.other_name);
       this.formFile.append('type', this.form.type);
       this.formFile.append('group_id', this.$route.params.id);
 

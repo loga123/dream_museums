@@ -469,13 +469,9 @@ class MarkerController extends BaseController
 
         $marker = new Marker($request->all());
         $marker->setAttribute('user_id',$this->user->id);
-        if(!empty($request['clone'])){
+        if(!empty($request['clone'])) {
             $clone = $request['clone'] === "true" ? 1 : 0;
             $marker->clone = $clone;
-            if($request['other_name'] !== "undefined"){
-                $marker->name = $request['name'].' '.$request['other_name'];
-            }
-
         }
 
         if (!is_dir(public_path('storage/markers/' . $this->id))) {
@@ -886,13 +882,9 @@ class MarkerController extends BaseController
         $marker = new Marker($request->all());
         $marker->setAttribute('user_id',$this->user->id);
 
-        if(!empty($request['clone'])){
+        if(!empty($request['clone'])) {
             $clone = $request['clone'] === "true" ? 1 : 0;
             $marker->clone = $clone;
-            if($request['other_name'] !== "undefined"){
-                $marker->name = $request['name'].' '.$request['other_name'];
-            }
-
         }
 
         if (!is_dir(public_path('storage/markers/' . $this->id))) {
