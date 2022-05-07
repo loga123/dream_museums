@@ -775,8 +775,7 @@ class MarkerController extends BaseController
      */
     public function destroy(Marker $marker)
     {
-        $user_id = (int)$marker->user_id;
-        if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($user_id !== $this->user->id)) {
+        if(!$this->user->hasAnyRole(['SUDO','Super Admin']) && ($marker->user_id !== $this->user->id)) {
             Log::error('NEMATE OVLASTI ZA AŽURIRANJE STAVKE.  Korisnik: ' .$this->name .' '.$this->last_name.' - ' .$this->email.'');
             return $this->sendResponseError(trans('validation.custom.error'), trans('validation.custom.permission_error'));
         }
@@ -785,7 +784,7 @@ class MarkerController extends BaseController
 
         //delete markers and dependices
         foreach ($extension as $ext){
-            $path = public_path('storage/markers/'.$user_id.'/'.$marker->id.''.$ext);
+            $path = public_path('storage/markers/'.$marker->user_id.'/'.$marker->id.''.$ext);
 
             Log::emergency($path);
 

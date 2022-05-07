@@ -25,6 +25,13 @@ class Marker extends Model
         'clone'
     ];
 
+    protected $casts = [
+      'id' => 'integer',
+      'user_id' => 'integer',
+      'group_id' => 'integer',
+      'clone' => 'integer'
+    ];
+
     public function groups()
     {
         return $this->belongsToMany(Group::class,'marker_groups','marker_id','group_id');
