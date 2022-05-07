@@ -49,7 +49,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0">
-              <b-table sticky-header id="Markers" no-local-sorting responsive hover :items="markers.data" :fields="fieldsMarkers"  :sort-by.sync="sortBy"  :sort-desc.sync="sortDesc"  @sort-changed="getResults(1)">
+              <b-table sticky-header id="markers" no-local-sorting responsive hover :items="markers.data" :fields="fieldsMarkers"  :sort-by.sync="sortBy"  :sort-desc.sync="sortDesc"  @sort-changed="getResults(1)">
 
                 <template v-slot:head(select)>
                   <b-form-checkbox v-model="form.selectAll"  @change="select"></b-form-checkbox>
@@ -160,7 +160,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0">
-              <b-table sticky-header id="Markers" no-local-sorting responsive hover :items="otherMarkers.data" :fields="fieldsOtherMarkers"  :sort-by.sync="sortBy"  :sort-desc.sync="sortDesc"  @sort-changed="getOtherResults(1)">
+              <b-table sticky-header id="otherMarkers" no-local-sorting responsive hover :items="otherMarkers.data" :fields="fieldsOtherMarkers"  :sort-by.sync="sortBy"  :sort-desc.sync="sortDesc"  @sort-changed="getOtherResults(1)">
 
                 <template v-slot:cell(group_count)="data">
                   <template v-for="group in data.item.groups">
@@ -927,6 +927,7 @@
         axios.get(route)
           .then(response => {
             this.markers = response.data;
+            document.getElementById('markers').parentElement.scrollTop = 0;
         });
       },
 
@@ -945,6 +946,7 @@
         axios.get(route)
           .then(response => {
             this.otherMarkers = response.data;
+            document.getElementById('otherMarkers').parentElement.scrollTop = 0;
           });
       },
 
